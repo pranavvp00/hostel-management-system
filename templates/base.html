@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}Hostel Management System{% endblock %}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f9fafc;
+      scroll-behavior: smooth;
+      padding-top: 80px;
+    }
+
+    /* GLASSY NAVBAR */
+    .navbar {
+      background: linear-gradient(120deg, rgba(0,220,190,0.9), rgba(120,70,255,0.9));
+      backdrop-filter: blur(8px);
+      padding: 0.8rem;
+      transition: 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+
+    .navbar-brand {
+      color: white !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      animation: logoFloat 2.5s infinite ease-in-out;
+    }
+
+    @keyframes logoFloat {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .nav-link {
+      color: #fff !important;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      transition: 0.3s;
+      border-radius: 8px;
+    }
+
+    .nav-link:hover {
+      background: rgba(255,255,255,0.18);
+      color: #ffe082 !important;
+      transform: translateY(-2px);
+    }
+
+    /* MODERN GLOW BUTTON EFFECT */
+    .glow-btn {
+      background: linear-gradient(120deg, #00e1c6, #7650ff);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      transition: 0.3s;
+      box-shadow: 0 0 0 transparent;
+    }
+
+    .glow-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0px 8px 20px rgba(120,70,255,0.4);
+    }
+
+    /* FOOTER */
+    footer {
+      background: linear-gradient(120deg, #171717, #2e2e2e);
+      color: white;
+      padding: 1.4rem 0;
+      margin-top: 50px;
+    }
+
+    footer i {
+      color: #00e1c6;
+      margin: 0 5px;
+    }
+
+    /* AOS ANIMATIONS */
+    [data-aos] { opacity: 0; }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+
+      <a class="navbar-brand" href="/">
+        <i class="ri-building-4-line"></i> Find Your Hostel
+      </a>
+
+      <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="nav-link">
+                <i class="ri-logout-box-r-line"></i> Logout
+              </a>
+            </li>
+          {% else %}
+           
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="container" data-aos="fade-up" data-aos-duration="900">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="text-center mt-5" data-aos="fade-up">
+    <p class="mb-0">
+      &copy; {{ now|date:"Y" }} Hostel Management System  
+      <br>
+      Made</i> by Team AAAP
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    AOS.init({ duration: 900, once: true });
+
+    // Scroll Effect for Navbar
+    window.addEventListener("scroll", () => {
+      document.querySelector(".navbar")
+        .classList.toggle("scrolled", window.scrollY > 20);
+    });
+  </script>
+
+</body>
+</html>

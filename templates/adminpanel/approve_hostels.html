@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Approve Hostels{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center fw-bold mb-4">🏨 Pending Hostel Approvals</h2>
+    
+    <div class="row g-4">
+        {% for hostel in pending_hostels %}
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 hover-card">
+                {% if hostel.image %}
+                    <img src="{{ hostel.image.url }}" class="card-img-top" alt="Hostel" style="height:200px; object-fit:cover;">
+                {% else %}
+                    <img src="{% static 'default_hostel.jpg' %}" class="card-img-top" alt="Hostel" style="height:200px; object-fit:cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ hostel.name }}</h5>
+                    <p class="text-muted">{{ hostel.location }}</p>
+                    <p class="small">{{ hostel.address|truncatewords:15 }}</p>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="{% url 'approve_hostel' hostel.id %}" class="btn btn-success btn-sm me-2">✅ Approve</a>
+                    <a href="{% url 'reject_hostel' hostel.id %}" class="btn btn-danger btn-sm">❌ Reject</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No pending hostels for approval.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.card-footer a {
+    transition: transform 0.2s ease;
+}
+.card-footer a:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %}

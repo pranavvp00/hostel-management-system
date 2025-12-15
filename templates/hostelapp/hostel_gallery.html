@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Back Button -->
+  <a href="{% url 'warden_dashboard' %}" class="btn btn-secondary mb-4">← Back to Dashboard</a>
+
+  <h2 class="mb-4 text-center fw-bold">🏢 Hostel Gallery</h2>
+
+  <!-- Upload Form -->
+  <form method="POST" enctype="multipart/form-data" class="mb-5 p-4 shadow-sm rounded bg-white">
+    {% csrf_token %}
+    <div class="form-floating mb-3">
+      <input type="file" name="images" id="images" class="form-control" multiple required>
+      <label for="images">Upload Images</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" name="caption" id="caption" class="form-control" placeholder="Enter caption for all images">
+      <label for="caption">Caption (optional)</label>
+    </div>
+
+    <button type="submit" class="btn btn-gradient-primary w-100">Upload Album</button>
+  </form>
+
+  <!-- Gallery Display -->
+  <div class="row">
+    {% for group in gallery_groups %}
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 animate__animated animate__fadeInUp">
+          
+          <!-- Carousel -->
+          <div id="carousel{{ group.id }}" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for image in group.images.all %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                  <img src="{{ image.image.url }}" class="d-block w-100 rounded" style="height: 220px; object-fit: cover;">
+                </div>
+              {% endfor %}
+            </div>
+            {% if group.images.count > 1 %}
+              <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ group.id }}" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ group.id }}" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            {% endif %}
+          </div>
+
+          <!-- Caption + Delete Button -->
+          <div class="card-body text-center">
+            {% if group.caption %}
+              <p class="fw-semibold">{{ group.caption }}</p>
+            {% endif %}
+            <a href="{% url 'delete_gallery_group' group.id %}" class="btn btn-sm btn-gradient-danger mt-2">Delete</a>
+          </div>
+
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">No gallery albums uploaded yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

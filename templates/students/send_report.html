@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Send Report{% endblock %}
+
+{% block content %}
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+  .report-card {
+      animation: fadeIn 0.6s ease-in-out;
+      border-radius: 20px;
+      overflow: hidden;
+  }
+
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-gradient {
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      border: none;
+      color: #fff !important;
+      transition: 0.3s ease-in-out;
+  }
+
+  .btn-gradient:hover {
+      background: linear-gradient(90deg, #2575fc, #6a11cb);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .form-control:focus {
+      box-shadow: 0 0 0 0.15rem rgba(98, 0, 238, 0.25);
+      border-color: #6a11cb;
+  }
+
+  .page-title {
+      animation: fadeDown 0.7s ease-in-out;
+  }
+
+  @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+
+<div class="container mt-4">
+
+  <h2 class="mb-4 fw-bold text-primary page-title">
+    <i class="bi bi-flag-fill me-2"></i>Send Report to Admin
+  </h2>
+
+  <!-- Toast Messages -->
+  <div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="toast text-white 
+               {% if message.tags == 'success' %}bg-success{% else %}bg-danger{% endif %} 
+               border-0 shadow-lg mb-2" 
+               role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+
+            <div class="d-flex">
+              <div class="toast-body">
+                <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-octagon-fill{% endif %} me-2"></i>
+                {{ message }}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+
+  <!-- FORM CARD -->
+  <div class="card shadow report-card">
+    <div class="card-body p-4">
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">
+            <i class="bi bi-pencil-square me-1"></i>Report Message
+          </label>
+          <textarea class="form-control" name="message" rows="5" 
+            placeholder="Describe the issue, complaint, or request..." required></textarea>
+        </div>
+
+        <div class="d-flex gap-3 mt-3">
+          <button type="submit" class="btn btn-gradient px-4">
+            <i class="bi bi-send-fill me-1"></i> Send Report
+          </button>
+
+          <a href="{% url 'student_dashboard' %}" class="btn btn-secondary px-4">
+            <i class="bi bi-arrow-left-circle me-1"></i> Cancel
+          </a>
+        </div>
+
+      </form>
+      
+
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toastList = [...document.querySelectorAll('.toast')]
+    .map(toast => new bootstrap.Toast(toast));
+  toastList.forEach(toast => toast.show());
+});
+</script>
+
+{% endblock %}

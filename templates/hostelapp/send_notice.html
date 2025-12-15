@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}Send Notice{% endblock %}
+
+{% block content %}
+
+<style>
+  /* Smooth Fade-In Animation */
+  .fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Glassmorphism Card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    padding: 25px;
+  }
+
+  /* Floating Label */
+  .floating-label {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .floating-label textarea {
+    height: 150px;
+    resize: none;
+  }
+  .floating-label textarea,
+  .floating-label input {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    background: transparent;
+    color: #000;
+  }
+  .floating-label label {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    background: white;
+    padding: 0px 5px;
+    transition: all 0.3s;
+    pointer-events: none;
+    color: #777;
+  }
+  .floating-label textarea:focus + label,
+  .floating-label textarea:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    color: #007bff;
+  }
+
+  /* Live Preview Box */
+  #preview-box {
+    border-left: 4px solid #0d6efd;
+    padding: 15px;
+    background: #f8f9fa;
+    display: none;
+    border-radius: 8px;
+  }
+
+  /* Success Modal */
+  #successModal .modal-content {
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    animation: pop 0.5s ease-out;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+</style>
+
+
+<div class="container mt-4 fade-in">
+  <div class="glass-card">
+
+    <h3 class="fw-bold mb-3 text-primary">📢 Send Notice - {{ hostel.name }}</h3>
+
+    <!-- Notice Form -->
+    <form method="POST" id="noticeForm">
+      {% csrf_token %}
+
+      <!-- Floating Label Textarea -->
+      <div class="floating-label">
+        <textarea name="message" id="notice-message" placeholder=" " required></textarea>
+        <label>Write your notice...</label>
+      </div>
+
+      <button type="submit" class="btn btn-warning w-100 mb-2 fw-bold">Send Notice</button>
+
+      <a href="{% url 'warden_dashboard' %}" class="btn btn-secondary w-100">⬅ Back</a>
+    </form>
+
+    <!-- Live Preview Section -->
+    
+
+  </div>
+</div>
+
+
+<!-- Success Popup Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4 text-center">
+      <h3 class="text-success">✔ Notice Sent Successfully!</h3>
+      <p>Your message has been delivered to all students.</p>
+      <button class="btn btn-primary mt-3" data-bs-dismiss="modal">OK</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Live Preview
+  const textarea = document.getElementById("notice-message");
+  const previewBox = document.getElementById("preview-box");
+  const previewText = document.getElementById("preview-text");
+
+  textarea.addEventListener("input", () => {
+    const text = textarea.value.trim();
+    previewBox.style.display = text ? "block" : "none";
+    previewText.textContent = text;
+  });
+
+  // Success Modal on Submit
+  const form = document.getElementById("noticeForm");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('successModal'));
+    modal.show();
+
+    // Automatically submit after animation
+    setTimeout(() => {
+      form.submit();
+    }, 1200);
+  });
+</script>
+
+{% endblock %}

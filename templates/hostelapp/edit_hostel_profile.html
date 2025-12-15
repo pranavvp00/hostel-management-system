@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Back Button -->
+  <a href="{% url 'warden_dashboard' %}" class="btn btn-secondary mb-4">← Back to Dashboard</a>
+
+  <h3 class="text-center fw-bold mb-4 animate__animated animate__fadeInDown">
+    🏠 Edit Hostel Profile
+  </h3>
+
+  <form method="POST" enctype="multipart/form-data" class="shadow-sm p-4 bg-white rounded animate__animated animate__fadeInUp">
+    {% csrf_token %}
+
+    <div class="form-floating mb-3">
+      <input type="text" name="name" value="{{ hostel.name }}" class="form-control" id="hostelName" placeholder="Hostel Name" required>
+      <label for="hostelName">Hostel Name</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" name="location" value="{{ hostel.location }}" class="form-control" id="hostelLocation" placeholder="Location" required>
+      <label for="hostelLocation">Location</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="number" name="capacity" value="{{ hostel.capacity }}" class="form-control" id="hostelCapacity" placeholder="Capacity" required>
+      <label for="hostelCapacity">Capacity</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="number" step="0.01" name="room_rent" value="{{ hostel.room_rent }}" class="form-control" id="hostelRent" placeholder="Room Rent" required>
+      <label for="hostelRent">Room Rent (₹)</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <textarea name="description" class="form-control" id="hostelDescription" placeholder="Hostel Description" style="height:100px;">{{ hostel.description }}</textarea>
+      <label for="hostelDescription">Description</label>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Main Image</label>
+      <input type="file" name="main_image" class="form-control">
+      {% if hostel.main_image %}
+        <img src="{{ hostel.main_image.url }}" class="mt-2 rounded" style="height:120px;">
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-gradient-info w-100">Update Profile</button>
+  </form>
+</div>
+{% endblock %}

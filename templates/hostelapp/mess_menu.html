@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Mess Menu{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+
+  <!-- Header + Back Button -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">🍽️ Mess Menu</h2>
+
+    <!-- REAL BOOTSTRAP BUTTON -->
+    <a href="{% url 'warden_dashboard' %}"
+       class="btn btn-secondary"
+       style="font-weight:600;">
+       ← Back
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover shadow-sm">
+      <thead class="table-primary">
+        <tr>
+          <th>Day</th>
+          <th>Menu</th>
+          {% if user.userprofile.role == 'warden' %}
+          <th>Edit</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for menu in mess_menus %}
+        <tr>
+          <td class="fw-bold">{{ menu.day }}</td>
+          <td>{{ menu.items }}</td>
+
+          {% if user.userprofile.role == 'warden' %}
+          <td>
+            <a href="{% url 'edit_single_menu' menu.id %}"
+               class="btn btn-sm btn-warning">
+               Edit
+            </a>
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" class="text-center text-muted">No menu available.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if user.userprofile.role == 'warden' %}
+  <div class="text-center mt-4">
+    <a href="{% url 'edit_mess_menu' %}" class="btn btn-success">Edit All Days</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

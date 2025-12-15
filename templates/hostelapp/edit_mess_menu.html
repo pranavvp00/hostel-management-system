@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Edit Mess Menu - {{ hostel.name }}</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label>Day</label>
+      <input type="text" name="day" class="form-control" placeholder="e.g., Monday">
+    </div>
+    <div class="mb-3">
+      <label>Items</label>
+      <textarea name="items" class="form-control" rows="4"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Add Menu</button>
+  </form>
+  <hr>
+  <h5>Existing Menus</h5>
+  <ul>
+    {% for menu in menus %}
+      <li><strong>{{ menu.day }}:</strong> {{ menu.items }}</li>
+    {% empty %}
+      <li>No menu items added yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

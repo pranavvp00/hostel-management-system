@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Make Payment{% endblock %}
+
+{% block content %}
+
+<!-- Modern Font + Icons -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+  .gradient-card {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .form-control {
+      border-radius: 12px;
+  }
+
+  .btn-animated {
+      transition: 0.3s ease;
+      font-weight: 600;
+      border-radius: 12px;
+  }
+
+  .btn-animated:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  .table-hover tbody tr:hover {
+      background-color: #f1f3ff;
+      transition: 0.3s;
+  }
+
+  /* Fade animation */
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="container mt-5 col-md-8">
+  
+  <!-- Header -->
+  <div class="gradient-card mb-4">
+      <h2 class="fw-bold"><i class="ri-wallet-3-fill"></i> Make Payment</h2>
+      <p class="mb-0 opacity-75">Complete your hostel payment securely</p>
+  </div>
+
+  <!-- Django Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+        <i class="ri-information-fill"></i> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Payment Form -->
+  <div class="card shadow-lg p-4 border-0 rounded-4">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold"><i class="ri-money-rupee-circle-fill"></i> Amount</label>
+        <input type="number" name="amount" id="amount" class="form-control" step="0.01" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold"><i class="ri-image-add-fill"></i> Payment Screenshot (optional)</label>
+        <input type="file" name="screenshot" id="screenshot" class="form-control">
+      </div>
+
+      <button type="submit" class="btn btn-success btn-animated w-100 mt-2">
+        <i class="ri-check-double-line"></i> Submit Payment
+      </button>
+
+      <a href="{% url 'student_dashboard' %}" class="btn btn-secondary w-100 btn-animated mt-3">
+        <i class="ri-arrow-left-circle-line"></i> Cancel
+      </a>
+    </form>
+  </div>
+
+  <!-- Payment History -->
+  <h4 class="fw-bold mt-5"><i class="ri-file-list-3-fill"></i> Your Previous Payments</h4>
+
+  {% if payments %}
+    <div class="table-responsive mt-3">
+      <table class="table table-hover shadow-sm rounded-3 overflow-hidden">
+        <thead class="table-dark">
+          <tr>
+            <th><i class="ri-currency-line"></i> Amount</th>
+            <th><i class="ri-time-line"></i> Date</th>
+            <th><i class="ri-shield-check-line"></i> Status</th>
+            <th><i class="ri-image-fill"></i> Screenshot</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr>
+            <td>{{ payment.amount }}</td>
+            <td>{{ payment.date|date:"M d, Y H:i" }}</td>
+            <td>
+              <span class="badge bg-primary px-3 py-2">{{ payment.status|capfirst }}</span>
+            </td>
+            <td>
+              {% if payment.screenshot %}
+                <a href="{{ payment.screenshot.url }}" target="_blank" class="text-decoration-none fw-semibold">
+                    <i class="ri-eye-fill"></i> View
+                </a>
+              {% else %}
+                <span class="text-muted">-</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">No payments made yet.</p>
+  {% endif %}
+  <!-- BACK BUTTON -->
+  <a href="{% url 'student_dashboard' %}" class="btn-back mb-3 d-inline-flex align-items-center">
+      <i class="ri-arrow-left-line fs-5 me-2"></i> Back
+  </a>
+
+</div>
+
+{% endblock %}

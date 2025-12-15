@@ -1,0 +1,36 @@
+# Core framework
+Django==5.0.4
+
+# Database
+psycopg2-binary==2.9.9
+
+# Image handling (for profile photos, hostel gallery, etc.)
+Pillow==10.4.0
+
+# Environment variables management
+python-dotenv==1.0.1
+
+# For forms and widgets (optional but useful for better forms)
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7
+
+# Payment integration (if using Razorpay or Stripe)
+razorpay==1.4.2
+# stripe==10.3.0   # Uncomment if you plan to use Stripe instead
+
+# For handling CORS (if you ever expose APIs)
+django-cors-headers==4.3.1
+
+# Security and Authentication (optional enhancements)
+django-allauth==64.0.0
+
+# Static files management (if deploying)
+whitenoise==6.7.0
+
+# Optional utilities for admin UI enhancement
+django-import-export==4.1.0
+django-filter==24.3
+
+# Development tools
+black==24.8.0
+isort==5.13.2

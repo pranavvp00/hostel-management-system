@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}Manage Students{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body {
+    font-family: 'Georgia', serif;
+}
+
+.card-student {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-student:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+}
+
+.student-photo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #555;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 10px rgba(106,17,203,0.5);
+    outline: none;
+}
+
+h4 i {
+    margin-right: 8px;
+}
+
+@media (max-width: 767px) {
+    .card-student { margin-bottom: 15px; }
+}
+</style>
+
+<div class="container mt-5">
+
+  <h2 class="text-center fw-bold mb-4">
+    <i class="fa-solid fa-users"></i> Manage Students
+    {% if hostel %} - {{ hostel.name }} {% endif %}
+  </h2>
+
+  {% if messages %}
+    <div class="mb-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Pending Students -->
+  <h4 class="mt-4"><i class="fa-solid fa-hourglass-half"></i> Pending Students</h4>
+  <div class="row">
+    {% for student in students %}
+      {% if not student.room %}
+      <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card card-student p-3">
+
+          <div class="d-flex align-items-center mb-2">
+            {% if student.user_profile.profile_photo %}
+              <img src="{{ student.user_profile.profile_photo.url }}" class="student-photo me-3">
+            {% else %}
+              <img src="https://via.placeholder.com/55" class="student-photo me-3">
+            {% endif %}
+            <div>
+              <h5 class="mb-0">{{ student.user_profile.user.username }}</h5>
+              <small class="text-muted">{{ student.user_profile.user.email }}</small>
+            </div>
+          </div>
+
+          <p><i class="fa-solid fa-phone"></i> {{ student.user_profile.phone|default:"N/A" }}</p>
+          <p><i class="fa-solid fa-user-guard"></i> Guardian: {{ student.parent_name|default:"N/A" }} | {{ student.parent_phone|default:"N/A" }}</p>
+          <p><i class="fa-solid fa-house"></i> Address: {{ student.user_profile.address|default:"N/A" }}</p>
+          <p>Status: <strong>{{ student.request_status|default:"Pending"|capfirst }}</strong></p>
+
+          <!-- Approve / Assign -->
+          {% if student.request_status == 'pending' %}
+          <form method="POST" action="{% url 'approve_student' student.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-gradient w-100 mb-1">
+              <i class="fa-solid fa-check"></i> Approve
+            </button>
+          </form>
+          {% elif student.request_status == 'approved' %}
+          <form method="POST" action="{% url 'assign_room' student.id %}" class="d-flex gap-2">
+            {% csrf_token %}
+            {% if hostel.rooms.exists %}
+            <select name="room_id" class="form-select form-select-sm">
+              <option value="" disabled selected>Select Room</option>
+              {% for room in hostel.rooms.all %}
+                {% if not room.is_occupied %}
+                  <option value="{{ room.id }}">Room {{ room.room_number }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% endif %}
+            <input type="text" name="room_number" class="form-control form-control-sm" placeholder="Room Number">
+            <button type="submit" class="btn btn-gradient">
+              <i class="fa-solid fa-door-open"></i> Assign
+            </button>
+          </form>
+          {% endif %}
+
+          <!-- Remove -->
+          <form method="POST" action="{% url 'remove_student' student.id %}" class="mt-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">
+              <i class="fa-solid fa-trash"></i> Remove
+            </button>
+          </form>
+
+        </div>
+      </div>
+      {% endif %}
+    {% empty %}
+      <p class="text-center text-muted">No pending students.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Assigned Students -->
+  <h4 class="mt-5"><i class="fa-solid fa-check-circle"></i> Assigned Students</h4>
+
+  <div class="row">
+    {% for student in students %}
+      {% if student.room %}
+      <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card card-student p-3">
+
+          <div class="d-flex align-items-center mb-2">
+            {% if student.user_profile.profile_photo %}
+              <img src="{{ student.user_profile.profile_photo.url }}" class="student-photo me-3">
+            {% else %}
+              <img src="https://via.placeholder.com/55" class="student-photo me-3">
+            {% endif %}
+            <div>
+              <h5 class="mb-0">{{ student.user_profile.user.username }}</h5>
+              <small class="text-muted">{{ student.user_profile.user.email }}</small>
+            </div>
+          </div>
+
+          <p><i class="fa-solid fa-phone"></i> {{ student.user_profile.phone|default:"N/A" }}</p>
+          <p><i class="fa-solid fa-user-guard"></i> Guardian: {{ student.parent_name|default:"N/A" }} | {{ student.parent_phone|default:"N/A" }}</p>
+          <p><i class="fa-solid fa-house"></i> Address: {{ student.user_profile.address|default:"N/A" }}</p>
+          <p>Room: <strong>{{ student.room.room_number }}</strong></p>
+          <p>Status: <strong>{{ student.request_status|capfirst }}</strong></p>
+
+          <form method="POST" action="{% url 'remove_student' student.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">
+              <i class="fa-solid fa-trash"></i> Remove
+            </button>
+          </form>
+
+        </div>
+      </div>
+      {% endif %}
+    {% empty %}
+      <p class="text-center text-muted">No assigned students yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Back Button -->
+  <div class="text-center mt-4">
+    <a href="{% url 'warden_dashboard' %}" class="btn btn-secondary btn-gradient">
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+
+</div>
+{% endblock %}

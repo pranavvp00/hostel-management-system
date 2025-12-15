@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}View Payments{% endblock %}
+
+{% block content %}
+<style>
+    /* --- Professional Teal Blue Corporate Theme --- */
+
+    body {
+        background: #f0f7fa;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        flex: 1;
+    }
+
+    h3 {
+        font-weight: 600;
+        color: #005f73;
+        animation: fadeInDown 0.6s ease-in-out;
+    }
+
+    /* Back Button */
+    .back-btn {
+        background: #0a9396;
+        color: white;
+        border-radius: 8px;
+        padding: 8px 16px;
+        transition: 0.3s;
+        margin-bottom: 15px;
+    }
+
+    .back-btn:hover {
+        background: #005f73;
+        color: white;
+        transform: translateX(-3px);
+    }
+
+    /* Cards & Table */
+    .table {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    thead {
+        background: #0a9396 !important;
+        color: white !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #e0fbfc !important;
+        transition: 0.2s;
+    }
+
+    /* Status Badge */
+    .badge-success-custom {
+        background: #0a9396;
+        padding: 6px 12px;
+        border-radius: 6px;
+        color: white;
+        font-size: 0.85rem;
+    }
+
+    /* Fade animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="container mt-5">
+
+    <!-- Back Button -->
+    <a href="{% url 'warden_dashboard' %}" class="btn back-btn">
+        ⬅ Back
+    </a>
+
+    <h3>💰 Payments from Students ({{ hostel.name }})</h3>
+
+    <!-- Django messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if payments %}
+        <table class="table table-hover mt-4 shadow-sm">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Screenshot</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.student.user_profile.user.username }}</td>
+                    <td>₹{{ payment.amount }}</td>
+                    <td>{{ payment.date|date:"M d, Y H:i" }}</td>
+
+                    <!-- Always show Completed -->
+                    <td>
+                        <span class="badge-success-custom">Completed</span>
+                    </td>
+
+                    <td>
+                        {% if payment.screenshot %}
+                            <a href="{{ payment.screenshot.url }}" target="_blank">View</a>
+                        {% else %}
+                            <span class="text-muted">No screenshot</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ payment.note|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="mt-4 text-muted">No payments found for your hostel.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

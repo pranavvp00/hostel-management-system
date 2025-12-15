@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="text-center mt-5" data-aos="fade-up">
+  <h1 class="fw-bold display-4"
+      style="background: linear-gradient(120deg, #00e1c6, #7a4bff);
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;">
+    College Hostel Management System
+  </h1>
+
+  <p class="lead text-secondary mt-2" data-aos="fade-up" data-aos-delay="200">
+    Efficiently manage hostels, students, and payments — all in one place.
+  </p>
+
+  {% if not user.is_authenticated %}
+    <div class="mt-4" data-aos="zoom-in">
+      <a href="{% url 'login' %}" class="glow-btn me-3">
+        <i class="ri-login-circle-line"></i> Login
+      </a>
+
+      <a href="{% url 'student_signup' %}" class="glow-btn me-3">
+        <i class="ri-user-add-line"></i> Student Signup
+      </a>
+
+      <a href="{% url 'warden_signup' %}" class="glow-btn">
+        <i class="ri-shield-user-line"></i> Warden Signup
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+
+
+<!-- HOSTEL LIST SECTION -->
+<div class="container mt-5">
+  <h2 class="text-center mb-4 fw-bold" data-aos="fade-up">
+    <i class="ri-building-4-line"></i> Available Hostels
+  </h2>
+
+  <div class="row">
+    {% for hostel in hostels %}
+
+      <div class="col-md-4 mb-4">
+        <div class="card shadow border-0 h-100" 
+             data-aos="fade-up" 
+             data-aos-duration="700"
+             style="border-radius: 15px; overflow:hidden;">
+
+          <!-- Hostel main image -->
+          {% if hostel.main_image %}
+            <img src="{{ hostel.main_image.url }}" class="card-img-top" alt="Hostel Image">
+          {% else %}
+            <img src="{% static 'default_hostel.jpg' %}" class="card-img-top" alt="Hostel Image">
+          {% endif %}
+
+          <div class="card-body text-center">
+
+            <h5 class="card-title fw-semibold">{{ hostel.name }}</h5>
+            <p class="text-muted">{{ hostel.location }}</p>
+
+            <div class="mb-3">
+              <span class="badge bg-gradient rounded-pill" 
+                style="background: linear-gradient(120deg,#00e1c6,#7a4bff);">
+                Capacity: {{ hostel.capacity }}
+              </span>
+
+              <span class="badge bg-dark ms-2 rounded-pill">
+                ₹{{ hostel.room_rent }}
+              </span>
+            </div>
+
+            <p class="text-truncate px-3">{{ hostel.description|default:"No description available" }}</p>
+
+            <!-- Warden Details -->
+            {% if hostel.warden %}
+              <div class="mt-3">
+                {% if hostel.warden.profile_photo %}
+                  <img src="{{ hostel.warden.profile_photo.url }}" class="rounded-circle mb-2" width="80" height="80">
+                {% else %}
+                  <img src="{% static 'default_profile.png' %}" class="rounded-circle mb-2" width="80" height="80">
+                {% endif %}
+                <p class="fw-bold mb-0">{{ hostel.warden.user.username }}</p>
+                <small class="text-muted">Contact for more queries</small>
+              </div>
+            {% else %}
+              <div class="mt-3">
+                <img src="{% static 'default_profile.png' %}" class="rounded-circle mb-2" width="80" height="80">
+                <p class="fw-bold mb-0">No Warden</p>
+                <small class="text-muted">Warden</small>
+              </div>
+            {% endif %}
+
+            <!-- Mess Menu -->
+            {% if hostel.menus.all %}
+              <h6 class="mt-4">🍽️ Mess Menu</h6>
+
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-2">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Day</th>
+                      <th>Menu</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for menu in hostel.menus.all %}
+                      <tr>
+                        <td>{{ menu.day }}</td>
+                        <td>{{ menu.items }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+            {% else %}
+              <p class="text-muted mt-2">Mess menu not available</p>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+    {% empty %}
+      <div class="col-12 text-center">
+        <p class="text-muted">No hostels available at the moment.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

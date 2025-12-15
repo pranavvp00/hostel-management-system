@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Warden Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Icons -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+  /* Fancy Cards */
+  .dash-card {
+      padding: 22px;
+      border-radius: 18px;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+      animation: fadeIn 0.7s ease-in-out;
+  }
+  .dash-card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+  }
+
+  /* Color themes */
+  .bg-purple { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+  .bg-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .bg-orange { background: linear-gradient(135deg, #f7971e, #ffd200); color: black; }
+  .bg-blue { background: linear-gradient(135deg, #36d1dc, #5b86e5); }
+  .bg-pink { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+  .bg-darkblue { background: linear-gradient(135deg, #141e30, #243b55); }
+
+  .dash-btn {
+      border-radius: 12px;
+      padding: 7px 16px;
+      font-weight: 600;
+      transition: 0.3s;
+  }
+  .dash-btn:hover {
+      transform: scale(1.05);
+  }
+
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="container mt-4">
+
+  <h3 class="fw-bold">
+    Hello {{ user.username }} 👋  
+    <small class="text-muted">Welcome back!</small>
+  </h3>
+
+  <!-- DASHBOARD CARDS -->
+  <div class="row mt-4">
+
+    <!-- Manage Students -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-purple">
+        <i class="ri-team-fill fs-1 mb-2"></i>
+        <h5>Manage Students</h5>
+        <a href="{% url 'manage_students' %}" class="btn btn-light dash-btn mt-2">View</a>
+      </div>
+    </div>
+
+    <!-- Mess Menu -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-green">
+        <i class="ri-restaurant-fill fs-1 mb-2"></i>
+        <h5>Mess Menu</h5>
+        <a href="{% url 'edit_mess_menu' %}" class="btn btn-light dash-btn mt-2">Edit</a>
+      </div>
+    </div>
+
+    <!-- Notices -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-orange">
+        <i class="ri-notification-3-fill fs-1 mb-2"></i>
+        <h5>Notices</h5>
+        <a href="{% url 'send_notice' %}" class="btn btn-dark dash-btn mt-2">Send</a>
+      </div>
+    </div>
+
+    <!-- Hostel Profile -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-blue">
+        <i class="ri-building-4-fill fs-1 mb-2"></i>
+        <h5>Hostel Profile</h5>
+        <a href="{% url 'edit_hostel_profile' %}" class="btn btn-light dash-btn mt-2">Edit</a>
+      </div>
+    </div>
+
+    <!-- Hostel Gallery -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-pink">
+        <i class="ri-gallery-fill fs-1 mb-2"></i>
+        <h5>Hostel Gallery</h5>
+        <a href="{% url 'hostel_gallery' %}" class="btn btn-light dash-btn mt-2">View / Add</a>
+      </div>
+    </div>
+
+    <!-- Create Room -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-darkblue">
+        <i class="ri-home-gear-fill fs-1 mb-2"></i>
+        <h5>Create Room</h5>
+        <a href="{% url 'create_room' %}" class="btn btn-light dash-btn mt-2">Add Room</a>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div class="col-md-3 mb-3">
+      <div class="dash-card bg-green">
+        <i class="ri-bank-card-fill fs-1 mb-2"></i>
+        <h5>Payments</h5>
+        <a href="{% url 'view_payments' %}" class="btn btn-light dash-btn mt-2">View</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Admin Notices -->
+  <div class="mt-5">
+    <h4 class="fw-bold"><i class="ri-megaphone-fill"></i> Latest Notices from Admin</h4>
+
+    {% if admin_notices %}
+      {% for notice in admin_notices %}
+        <div class="card mb-3 shadow border-info">
+          <div class="card-body">
+            <h5 class="card-title text-primary">{{ notice.title }}</h5>
+            <p>{{ notice.message }}</p>
+            <small class="text-muted">
+              Posted on {{ notice.created_at|date:"M d, Y H:i" }}
+            </small>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">No admin notices available.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
